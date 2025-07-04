@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dashboard de Ventas - Carrera</title>
   <style>
     body {
@@ -25,7 +25,8 @@
       width: 90%;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px;
       border: 1px solid #999;
     }
@@ -63,9 +64,18 @@
       animation: bounce 1.5s infinite;
     }
 
-    .pos-1 .base { background: gold; height: 120px; }
-    .pos-2 .base { background: silver; height: 80px; }
-    .pos-3 .base { background: #cd7f32; height: 60px; }
+    .pos-1 .base {
+      background: gold;
+      height: 120px;
+    }
+    .pos-2 .base {
+      background: silver;
+      height: 80px;
+    }
+    .pos-3 .base {
+      background: #cd7f32;
+      height: 60px;
+    }
 
     .base {
       width: 100px;
@@ -77,8 +87,13 @@
     }
 
     @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
     }
 
     #efecto-venta {
@@ -93,8 +108,14 @@
     }
 
     @keyframes explosion {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(5); opacity: 0; }
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(5);
+        opacity: 0;
+      }
     }
 
     #nombre-vendedor {
@@ -116,12 +137,14 @@
   </style>
 </head>
 <body>
-
   <h1>📋 Detalle de Ventas</h1>
   <table id="ventas-table">
     <thead>
       <tr>
-        <th>Mesa Pepe</th><th>FTD</th><th>Mesa Pepa</th><th>FTD</th>
+        <th>Mesa Mariana</th>
+        <th>FTD</th>
+        <th>Mesa David</th>
+        <th>FTD</th>
       </tr>
     </thead>
     <tbody id="data-rows"></tbody>
@@ -141,7 +164,8 @@
   <audio id="audio-fiesta" src="sonidoB.mp4" preload="auto"></audio>
 
   <script>
-    const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
+    const SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
 
     let datosAnteriores = {};
 
@@ -158,10 +182,10 @@
       const mesasMap = {};
 
       rows.forEach((r, i) => {
-        const cells = r.c.map(c => c?.v ?? "");
+        const cells = r.c.map((c) => c?.v ?? "");
         const tr = document.createElement("tr");
 
-        cells.forEach(cell => {
+        cells.forEach((cell) => {
           const td = document.createElement("td");
           td.textContent = cell;
           tr.appendChild(td);
@@ -169,19 +193,28 @@
 
         tbody.appendChild(tr);
 
-        if (cells[0] && !isNaN(cells[1])) {
+        // Solo agregar si el nombre NO contiene "total"
+        if (
+          cells[0] &&
+          !cells[0].toString().toLowerCase().includes("total") &&
+          !isNaN(cells[1])
+        ) {
           const id = `1-${i}`;
           mesasMap[id] = { nombre: cells[0], ftd: Number(cells[1]) };
         }
-        if (cells[2] && !isNaN(cells[3])) {
+        if (
+          cells[2] &&
+          !cells[2].toString().toLowerCase().includes("total") &&
+          !isNaN(cells[3])
+        ) {
           const id = `2-${i}`;
           mesasMap[id] = { nombre: cells[2], ftd: Number(cells[3]) };
         }
 
-        if (cells[0] && !cells[0].toLowerCase().includes("total")) {
+        if (cells[0] && !cells[0].toString().toLowerCase().includes("total")) {
           agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
         }
-        if (cells[2] && !cells[2].toLowerCase().includes("total")) {
+        if (cells[2] && !cells[2].toString().toLowerCase().includes("total")) {
           agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
         }
       });
@@ -192,7 +225,11 @@
 
     function detectarVentas(mesasMap) {
       Object.entries(mesasMap).forEach(([mesaId, { nombre, ftd }]) => {
-        if (datosAnteriores[mesaId] !== undefined && ftd > datosAnteriores[mesaId]) {
+        if (
+          datosAnteriores[mesaId] !== undefined &&
+          ftd > datosAnteriores[mesaId] &&
+          !nombre.toLowerCase().includes("total")
+        ) {
           registrarVenta(nombre, mesaId, ftd);
         }
         datosAnteriores[mesaId] = ftd;
@@ -209,8 +246,8 @@
       }, 3000);
 
       const efecto = document.getElementById("efecto-venta");
-      efecto.style.left = (window.innerWidth / 2 - 50) + "px";
-      efecto.style.top = (window.innerHeight / 2 - 50) + "px";
+      efecto.style.left = window.innerWidth / 2 - 50 + "px";
+      efecto.style.top = window.innerHeight / 2 - 50 + "px";
       efecto.style.display = "block";
       efecto.style.animation = "explosion 0.6s ease-out";
 
@@ -219,17 +256,23 @@
         efecto.style.animation = "none";
       }, 600);
 
-      // 🎊 Confetti
+      // Confetti
       confetti({
         particleCount: 200,
         spread: 100,
-        origin: { y: 0.6 }
+        origin: { y: 0.6 },
       });
 
-      // 🔊 Sonido
+      // Sonido
       const audio = document.getElementById("audio-fiesta");
       audio.currentTime = 0;
       audio.play();
+
+      // Actualizar tabla (si quieres)
+      // const span = document.getElementById("ftd-" + mesaId.replace("mesa-", ""));
+      // if (span) {
+      //   span.innerText = nuevoValor;
+      // }
     }
 
     function showTopRanking(agentes) {
@@ -239,9 +282,9 @@
       const top3 = agentes.sort((a, b) => b.ftd - a.ftd).slice(0, 3);
       const personajes = ["luigi", "mario", "yoshi"];
       const nombresImg = {
-        "luigi": "luigigif.gif",
-        "mario": "mariogif.gif",
-        "yoshi": "yoshi.gif"
+        luigi: "luigigif.gif",
+        mario: "mariogif.gif",
+        yoshi: "yoshi.gif",
       };
 
       top3.forEach((agente, index) => {
@@ -273,6 +316,5 @@
     fetchData();
     setInterval(fetchData, 5000);
   </script>
-
 </body>
 </html>
