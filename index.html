@@ -6,24 +6,36 @@
   <style>
     body {
       font-family: sans-serif;
-      background: #111;
-      color: #fff;
+      background: #fff;
+      color: #000;
       text-align: center;
       margin: 0;
       overflow-x: hidden;
     }
-    h1 { color: gold; margin-top: 20px; }
+
+    h1 {
+      color: #d4af37;
+      margin-top: 20px;
+    }
+
     table {
       margin: 20px auto;
       border-collapse: collapse;
       width: 90%;
     }
+
     th, td {
       padding: 10px;
-      border: 1px solid #666;
+      border: 1px solid #aaa;
     }
-    th { background: #222; }
-    tr:nth-child(even) { background-color: #00F3FF; }
+
+    th {
+      background: #eee;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
 
     .podio-container {
       display: flex;
@@ -32,15 +44,18 @@
       gap: 40px;
       margin-top: 40px;
     }
+
     .podio {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+
     .podio img {
       width: 100px;
       animation: bounce 1.5s infinite;
     }
+
     .pos-1 .base { background: gold; height: 120px; }
     .pos-2 .base { background: silver; height: 80px; }
     .pos-3 .base { background: #cd7f32; height: 60px; }
@@ -52,6 +67,7 @@
       justify-content: center;
       font-weight: bold;
       font-size: 18px;
+      color: #000;
     }
 
     @keyframes bounce {
@@ -62,7 +78,7 @@
     .ranking-title {
       font-size: 28px;
       margin-top: 40px;
-      color: #ffce00;
+      color: #d4af37;
     }
 
     #nombre-vendedor {
@@ -70,14 +86,14 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: black;
+      background: #000;
       color: white;
       padding: 12px 24px;
       font-size: 1.5em;
       border-radius: 12px;
       display: none;
       z-index: 10000;
-      box-shadow: 0 0 15px yellow;
+      box-shadow: 0 0 15px #ffd700;
       animation: vibrar 0.3s linear infinite;
     }
 
@@ -118,7 +134,7 @@
   <table id="ventas-table">
     <thead>
       <tr>
-        <th>Mesa Mariana</th><th>FTD</th><th>Mesa David</th><th>FTD</th>
+        <th>Mesa Pepe</th><th>FTD</th><th>Mesa Pepa</th><th>FTD</th>
       </tr>
     </thead>
     <tbody id="data-rows"></tbody>
@@ -128,7 +144,8 @@
   <div class="podio-container" id="podio"></div>
 
   <div id="nombre-vendedor"></div>
-  <audio id="audio-fiesta" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_131f85ff2a.mp3" preload="auto"></audio>
+  <audio id="audio-fiesta" src="fiesta.mp3" preload="auto"></audio>
+
 
   <script>
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
@@ -215,7 +232,7 @@
     }
 
     function randomColor() {
-      const colores = ["#ff0", "#f00", "#0f0", "#0ff", "#f0f", "#fff", "#ffa500"];
+      const colores = ["#ff0", "#f00", "#0f0", "#0ff", "#f0f", "#555", "#ffa500"];
       return colores[Math.floor(Math.random() * colores.length)];
     }
 
