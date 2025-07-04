@@ -11,7 +11,6 @@
     th { background: #222; }
     tr:nth-child(even) { background-color: #1a1a1a; }
 
-    /* Podio Mario Style */
     .podio-container {
       display: flex;
       justify-content: center;
@@ -54,36 +53,37 @@
       margin-top: 40px;
       color: #ffce00;
     }
-    /* Efectos visuales */
-  #efecto-venta {
-    position: fixed;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: radial-gradient(circle, yellow, orange, red);
-    pointer-events: none;
-    display: none;
-    z-index: 9999;
-  }
-  @keyframes explosion {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(5); opacity: 0; }
-  }
 
-  #nombre-vendedor {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: black;
-    color: white;
-    padding: 8px 16px;
-    font-size: 1.2em;
-    border-radius: 10px;
-    display: none;
-    z-index: 10000;
-    box-shadow: 0 0 10px yellow;
-  }
+    #efecto-venta {
+      position: fixed;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, yellow, orange, red);
+      pointer-events: none;
+      display: none;
+      z-index: 9999;
+    }
+
+    @keyframes explosion {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(5); opacity: 0; }
+    }
+
+    #nombre-vendedor {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: black;
+      color: white;
+      padding: 8px 16px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      display: none;
+      z-index: 10000;
+      box-shadow: 0 0 10px yellow;
+    }
   </style>
 </head>
 <body>
@@ -99,12 +99,15 @@
   </table>
 
   <h2 class="ranking-title">🏆 Ranking de Ventas</h2>
-  <div class="podio-container" id="podio">
-    <!-- Se genera dinámicamente -->
-  </div>
+  <div class="podio-container" id="podio"></div>
+
+  <!-- Elementos visuales -->
+  <div id="efecto-venta"></div>
+  <div id="nombre-vendedor"></div>
 
   <script>
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
+    const datosAnteriores = {};
 
     async function fetchData() {
       const res = await fetch(SHEET_URL);
@@ -116,8 +119,9 @@
       tbody.innerHTML = "";
 
       const agentes = [];
+      const mesasMap = {};
 
-      rows.forEach((r) => {
+      rows.forEach((r, i) => {
         const cells = r.c.map(c => c?.v ?? "");
         const tr = document.createElement("tr");
 
@@ -129,17 +133,46 @@
 
         tbody.appendChild(tr);
 
-        // Agregar agentes al ranking si son datos válidos
         if (cells[0] && !cells[0].toString().toLowerCase().includes("total") && !isNaN(cells[1])) {
           agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
+          mesasMap[`pepe-${i}`] = { nombre: cells[0], ftd: Number(cells[1]) };
         }
 
         if (cells[2] && !cells[2].toString().toLowerCase().includes("total") && !isNaN(cells[3])) {
           agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
+          mesasMap[`pepa-${i}`] = { nombre: cells[2], ftd: Number(cells[3]) };
         }
       });
 
       showTopRanking(agentes);
+      detectarVentas(mesasMap);
+    }
+
+    function detectarVentas(mesasMap) {
+      Object.entries(mesasMap).forEach(([mesaId, {nombre, ftd}]) => {
+        if (datosAnteriores[mesaId] !== undefined && ftd > datosAnteriores[mesaId]) {
+          registrarVenta(nombre, mesaId, ftd);
+        }
+        datosAnteriores[mesaId] = ftd;
+      });
+    }
+
+    function registrarVenta(nombre, mesaId, nuevoValor) {
+      const nombreDiv = document.getElementById("nombre-vendedor");
+      nombreDiv.innerText = `¡${nombre} hizo una venta!`;
+      nombreDiv.style.display = "block";
+      setTimeout(() => nombreDiv.style.display = "none", 3000);
+
+      const efecto = document.getElementById("efecto-venta");
+      efecto.style.left = (window.innerWidth / 2 - 50) + "px";
+      efecto.style.top = (window.innerHeight / 2 - 50) + "px";
+      efecto.style.display = "block";
+      efecto.style.animation = "explosion 0.6s ease-out";
+
+      setTimeout(() => {
+        efecto.style.display = "none";
+        efecto.style.animation = "none";
+      }, 600);
     }
 
     function showTopRanking(agentes) {
@@ -147,7 +180,7 @@
       podio.innerHTML = "";
 
       const top3 = agentes.sort((a, b) => b.ftd - a.ftd).slice(0, 3);
-      const personajes = ["luigi", "mario", "yoshi"]; // 1ro, 2do, 3ro
+      const personajes = ["luigi", "mario", "yoshi"];
       const nombresImg = {
         "luigi": "luigigif.gif",
         "mario": "mariogif.gif",
@@ -165,6 +198,7 @@
 
         const nombre = document.createElement("div");
         nombre.textContent = agente.nombre;
+
         const valor = document.createElement("div");
         valor.textContent = `${agente.ftd} FTD`;
 
@@ -180,45 +214,9 @@
       });
     }
 
+    // Inicialización
     fetchData();
-    setInterval(fetchData, 60000);
-
-    function detectarVentas(mesasMap) {
-    Object.entries(mesasMap).forEach(([mesaId, {nombre, ftd}]) => {
-      if(datosAnteriores[mesaId] !== undefined && ftd > datosAnteriores[mesaId]) {
-        registrarVenta(nombre, `mesa-${mesaId}`, ftd);
-      }
-      datosAnteriores[mesaId] = ftd;
-    });
-  }
-
-  function registrarVenta(nombre, mesaId, nuevoValor) {
-    // Mostrar nombre vendedor
-    const nombreDiv = document.getElementById("nombre-vendedor");
-    nombreDiv.innerText = `¡${nombre} hizo una venta!`;
-    nombreDiv.style.display = "block";
-    setTimeout(() => nombreDiv.style.display = "none", 3000);
-
-    // Efecto explosión
-    const efecto = document.getElementById("efecto-venta");
-    efecto.style.left = (window.innerWidth/2 - 50) + "px";
-    efecto.style.top = (window.innerHeight/2 - 50) + "px";
-    efecto.style.display = "block";
-    efecto.style.animation = "explosion 0.6s ease-out";
-
-    setTimeout(() => {
-      efecto.style.display = "none";
-      efecto.style.animation = "none";
-    }, 600);
-        // Actualizar valor en el span
-    const span = document.getElementById("ftd-" + mesaId.replace("mesa-", ""));
-    if(span) {
-      span.innerText = nuevoValor;
-    }
-  }
-
-  fetchData();
-  setInterval(fetchData, 5000); // actualizar cada 5 seg
+    setInterval(fetchData, 5000); // cada 5 segundos
   </script>
 </body>
 </html>
