@@ -4,12 +4,26 @@
   <meta charset="UTF-8">
   <title>Dashboard de Ventas - Carrera</title>
   <style>
-    body { font-family: sans-serif; background: #111; color: #fff; text-align: center; margin: 0; }
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      overflow-x: hidden;
+    }
     h1 { color: gold; margin-top: 20px; }
-    table { margin: 20px auto; border-collapse: collapse; width: 90%; }
-    th, td { padding: 10px; border: 1px solid #666; }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #666;
+    }
     th { background: #222; }
-    tr:nth-child(even) { background-color: #1a1a1a; }
+    tr:nth-child(even) { background-color: #00F3FF; }
 
     .podio-container {
       display: flex;
@@ -18,18 +32,15 @@
       gap: 40px;
       margin-top: 40px;
     }
-
     .podio {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .podio img {
       width: 100px;
       animation: bounce 1.5s infinite;
     }
-
     .pos-1 .base { background: gold; height: 120px; }
     .pos-2 .base { background: silver; height: 80px; }
     .pos-3 .base { background: #cd7f32; height: 60px; }
@@ -54,22 +65,6 @@
       color: #ffce00;
     }
 
-    #efecto-venta {
-      position: fixed;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle, yellow, orange, red);
-      pointer-events: none;
-      display: none;
-      z-index: 9999;
-    }
-
-    @keyframes explosion {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(5); opacity: 0; }
-    }
-
     #nombre-vendedor {
       position: fixed;
       top: 20px;
@@ -77,12 +72,43 @@
       transform: translateX(-50%);
       background: black;
       color: white;
-      padding: 8px 16px;
-      font-size: 1.2em;
-      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 1.5em;
+      border-radius: 12px;
       display: none;
       z-index: 10000;
-      box-shadow: 0 0 10px yellow;
+      box-shadow: 0 0 15px yellow;
+      animation: vibrar 0.3s linear infinite;
+    }
+
+    @keyframes vibrar {
+      0% { transform: translate(-50%, 0); }
+      25% { transform: translate(-50%, -2px); }
+      50% { transform: translate(-50%, 2px); }
+      75% { transform: translate(-50%, -2px); }
+      100% { transform: translate(-50%, 0); }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: red;
+      z-index: 9999;
+      animation: fall 2s linear forwards;
+      opacity: 0.8;
+      transform: rotate(45deg);
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -92,7 +118,7 @@
   <table id="ventas-table">
     <thead>
       <tr>
-        <th>Mesa Pepe</th><th>FTD</th><th>Mesa Pepa</th><th>FTD</th>
+        <th>Mesa Mariana</th><th>FTD</th><th>Mesa David</th><th>FTD</th>
       </tr>
     </thead>
     <tbody id="data-rows"></tbody>
@@ -101,9 +127,8 @@
   <h2 class="ranking-title">🏆 Ranking de Ventas</h2>
   <div class="podio-container" id="podio"></div>
 
-  <!-- Elementos visuales -->
-  <div id="efecto-venta"></div>
   <div id="nombre-vendedor"></div>
+  <audio id="audio-fiesta" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_131f85ff2a.mp3" preload="auto"></audio>
 
   <script>
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
@@ -151,28 +176,47 @@
     function detectarVentas(mesasMap) {
       Object.entries(mesasMap).forEach(([mesaId, {nombre, ftd}]) => {
         if (datosAnteriores[mesaId] !== undefined && ftd > datosAnteriores[mesaId]) {
-          registrarVenta(nombre, mesaId, ftd);
+          registrarVenta(nombre);
         }
         datosAnteriores[mesaId] = ftd;
       });
     }
 
-    function registrarVenta(nombre, mesaId, nuevoValor) {
+    function registrarVenta(nombre) {
       const nombreDiv = document.getElementById("nombre-vendedor");
-      nombreDiv.innerText = `¡${nombre} hizo una venta!`;
-      nombreDiv.style.display = "block";
-      setTimeout(() => nombreDiv.style.display = "none", 3000);
+      const audio = document.getElementById("audio-fiesta");
 
-      const efecto = document.getElementById("efecto-venta");
-      efecto.style.left = (window.innerWidth / 2 - 50) + "px";
-      efecto.style.top = (window.innerHeight / 2 - 50) + "px";
-      efecto.style.display = "block";
-      efecto.style.animation = "explosion 0.6s ease-out";
+      nombreDiv.innerText = `🎉 ¡${nombre} hizo una venta! 🎉`;
+      nombreDiv.style.display = "block";
+      audio.currentTime = 0;
+      audio.play();
+
+      lanzarConfeti(100);
 
       setTimeout(() => {
-        efecto.style.display = "none";
-        efecto.style.animation = "none";
-      }, 600);
+        nombreDiv.style.display = "none";
+      }, 4000);
+    }
+
+    function lanzarConfeti(cantidad) {
+      for (let i = 0; i < cantidad; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.top = "-10px";
+        confetti.style.backgroundColor = randomColor();
+        confetti.style.animationDuration = (Math.random() * 1.5 + 1) + "s";
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+          confetti.remove();
+        }, 3000);
+      }
+    }
+
+    function randomColor() {
+      const colores = ["#ff0", "#f00", "#0f0", "#0ff", "#f0f", "#fff", "#ffa500"];
+      return colores[Math.floor(Math.random() * colores.length)];
     }
 
     function showTopRanking(agentes) {
@@ -214,9 +258,8 @@
       });
     }
 
-    // Inicialización
     fetchData();
-    setInterval(fetchData, 5000); // cada 5 segundos
+    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
