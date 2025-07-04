@@ -1,30 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard de Ventas</title>
+  <meta charset="UTF-8">
+  <title>Dashboard de Ventas - Carrera</title>
   <style>
-    body { font-family: sans-serif; background-color: #111; color: white; text-align: center; }
-    h1 { color: gold; }
-    table { margin: auto; width: 90%; border-collapse: collapse; }
-    th, td { border: 1px solid #666; padding: 10px; text-align: center; }
-    th { background: #333; }
-    tr:nth-child(even) { background-color: #222; }
-    .highlight { font-weight: bold; background-color: #444; }
+    body { font-family: sans-serif; background: #111; color: #fff; text-align: center; margin: 0; }
+    h1 { color: gold; margin-top: 20px; }
+    table { margin: 20px auto; border-collapse: collapse; width: 90%; }
+    th, td { padding: 10px; border: 1px solid #666; }
+    th { background: #222; }
+    tr:nth-child(even) { background-color: #1a1a1a; }
+
+    /* Podio Mario Style */
+    .podio-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .podio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .podio img {
+      width: 100px;
+      animation: bounce 1.5s infinite;
+    }
+
+    .pos-1 .base { background: gold; height: 120px; }
+    .pos-2 .base { background: silver; height: 80px; }
+    .pos-3 .base { background: #cd7f32; height: 60px; }
+
+    .base {
+      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .ranking-title {
+      font-size: 28px;
+      margin-top: 40px;
+      color: #ffce00;
+    }
   </style>
 </head>
 <body>
-  <h1>🎯 Ventas por Mesa</h1>
+
+  <h1>📋 Detalle de Ventas</h1>
   <table id="ventas-table">
     <thead>
       <tr>
         <th>Mesa Pepe</th><th>FTD</th><th>Mesa Pepa</th><th>FTD</th>
       </tr>
     </thead>
-    <tbody id="data-rows">
-      <!-- Datos se insertan aquí -->
-    </tbody>
+    <tbody id="data-rows"></tbody>
   </table>
+
+  <h2 class="ranking-title">🏆 Ranking de Ventas</h2>
+  <div class="podio-container" id="podio">
+    <!-- Se genera dinámicamente -->
+  </div>
 
   <script>
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
@@ -38,13 +85,11 @@
       const tbody = document.getElementById("data-rows");
       tbody.innerHTML = "";
 
-      rows.forEach((r, i) => {
+      const agentes = [];
+
+      rows.forEach((r) => {
         const cells = r.c.map(c => c?.v ?? "");
         const tr = document.createElement("tr");
-
-        if (cells[0]?.toString().toLowerCase().includes("total")) {
-          tr.classList.add("highlight");
-        }
 
         cells.forEach(cell => {
           const td = document.createElement("td");
@@ -53,11 +98,61 @@
         });
 
         tbody.appendChild(tr);
+
+        // Agregar agentes al ranking si son datos válidos
+        if (cells[0] && !cells[0].toString().toLowerCase().includes("total") && !isNaN(cells[1])) {
+          agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
+        }
+
+        if (cells[2] && !cells[2].toString().toLowerCase().includes("total") && !isNaN(cells[3])) {
+          agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
+        }
+      });
+
+      showTopRanking(agentes);
+    }
+
+    function showTopRanking(agentes) {
+      const podio = document.getElementById("podio");
+      podio.innerHTML = "";
+
+      const top3 = agentes.sort((a, b) => b.ftd - a.ftd).slice(0, 3);
+      const personajes = ["luigi", "mario", "yoshi"]; // 1ro, 2do, 3ro
+      const nombresImg = {
+        "luigi": "descarga.jpeg",
+        "mario": "https://i.imgur.com/YrjsmFM.png",
+        "yoshi": "https://i.imgur.com/YXb4lyR.png"
+      };
+
+      top3.forEach((agente, index) => {
+        const pos = index + 1;
+        const div = document.createElement("div");
+        div.className = `podio pos-${pos}`;
+
+        const img = document.createElement("img");
+        img.src = nombresImg[personajes[index]];
+        img.alt = agente.nombre;
+
+        const nombre = document.createElement("div");
+        nombre.textContent = agente.nombre;
+        const valor = document.createElement("div");
+        valor.textContent = `${agente.ftd} FTD`;
+
+        const base = document.createElement("div");
+        base.className = "base";
+        base.textContent = `#${pos}`;
+
+        div.appendChild(img);
+        div.appendChild(nombre);
+        div.appendChild(valor);
+        div.appendChild(base);
+        podio.appendChild(div);
       });
     }
 
     fetchData();
-    setInterval(fetchData, 60000); // Actualiza cada minuto
+    setInterval(fetchData, 60000);
   </script>
 </body>
 </html>
+
