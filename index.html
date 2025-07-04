@@ -1,175 +1,82 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Dashboard de Ventas Integrado</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: #fff;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-  }
+  <meta charset="UTF-8">
+  <title>Dashboard de Ventas - Carrera</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; text-align: center; margin: 0; }
+    h1 { color: gold; margin-top: 20px; }
+    table { margin: 20px auto; border-collapse: collapse; width: 90%; }
+    th, td { padding: 10px; border: 1px solid #666; }
+    th { background: #222; }
+    tr:nth-child(even) { background-color: #1a1a1a; }
 
-  h1, h2 {
-    color: gold;
-    margin: 20px 0;
-  }
+    /* Podio Mario Style */
+    .podio-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 40px;
+      margin-top: 40px;
+    }
 
-  /* Tabla */
-  table {
-    margin: 0 auto 40px;
-    border-collapse: collapse;
-    width: 90%;
-    max-width: 900px;
-  }
-  th, td {
-    padding: 10px;
-    border: 1px solid #666;
-  }
-  th {
-    background: #222;
-  }
-  tr:nth-child(even) {
-    background-color: #1a1a1a;
-  }
+    .podio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  /* Podio Mario Style */
-  .podio-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 40px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-  .podio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 120px;
-  }
-  .podio img {
-    width: 100px;
-    animation: bounce 1.5s infinite;
-  }
-  .pos-1 .base {
-    background: gold;
-    height: 120px;
-  }
-  .pos-2 .base {
-    background: silver;
-    height: 80px;
-  }
-  .pos-3 .base {
-    background: #cd7f32;
-    height: 60px;
-  }
-  .base {
-    width: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 18px;
-    border-radius: 10px 10px 0 0;
-    margin-top: 8px;
-    color: #111;
-  }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+    .podio img {
+      width: 100px;
+      animation: bounce 1.5s infinite;
+    }
 
-  .ranking-title {
-    font-size: 28px;
-    margin: 40px 0 20px;
-    color: #ffce00;
-  }
+    .pos-1 .base { background: gold; height: 120px; }
+    .pos-2 .base { background: silver; height: 80px; }
+    .pos-3 .base { background: #cd7f32; height: 60px; }
 
-  /* Tablero mesas */
-  #mesas {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-    gap: 12px;
-    padding: 0 20px 40px;
-    max-width: 900px;
-    margin: 0 auto 60px;
-  }
-  .mesa {
-    background-color: #222;
-    padding: 15px;
-    border-radius: 10px;
-    border: 2px solid #444;
-    font-size: 1.1em;
-    transition: background-color 0.5s ease;
-    color: #fff;
-  }
-  .mesa.destacada {
-    background-color: #ffe600;
-    color: black;
-    border-color: #aaa;
-  }
+    .base {
+      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
 
-  /* Efectos visuales */
-  #efecto-venta {
-    position: fixed;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: radial-gradient(circle, yellow, orange, red);
-    pointer-events: none;
-    display: none;
-    z-index: 9999;
-  }
-  @keyframes explosion {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(5); opacity: 0; }
-  }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
 
-  #nombre-vendedor {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: black;
-    color: white;
-    padding: 8px 16px;
-    font-size: 1.2em;
-    border-radius: 10px;
-    display: none;
-    z-index: 10000;
-    box-shadow: 0 0 10px yellow;
-  }
-</style>
+    .ranking-title {
+      font-size: 28px;
+      margin-top: 40px;
+      color: #ffce00;
+    }
+  </style>
 </head>
 <body>
 
-<h1>📋 Detalle de Ventas</h1>
-<table id="ventas-table">
-  <thead>
-    <tr><th>Nombre</th><th>Mesa</th><th>FTD</th></tr>
-  </thead>
-  <tbody id="data-rows"></tbody>
-</table>
+  <h1>📋 Detalle de Ventas</h1>
+  <table id="ventas-table">
+    <thead>
+      <tr>
+        <th>Mesa Pepe</th><th>FTD</th><th>Mesa Pepa</th><th>FTD</th>
+      </tr>
+    </thead>
+    <tbody id="data-rows"></tbody>
+  </table>
 
-<h2 class="ranking-title">🏆 Ranking de Ventas</h2>
-<div class="podio-container" id="podio"></div>
+  <h2 class="ranking-title">🏆 Ranking de Ventas</h2>
+  <div class="podio-container" id="podio">
+    <!-- Se genera dinámicamente -->
+  </div>
 
-<h2 class="ranking-title">🪑 Tablero de Mesas</h2>
-<div id="mesas"></div>
+  <script>
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
 
-<div id="nombre-vendedor"></div>
-<div id="efecto-venta"></div>
-
-<script>
-  const SHEET_URL = "https://docs.google.com/spreadsheets/d/1YSewMr8-0A7UZneT56udEb4TJkvX088opKq2ykAhu2c/gviz/tq?tqx=out:json";
-  let datosAnteriores = {};
-
-  async function fetchData() {
-    try {
+    async function fetchData() {
       const res = await fetch(SHEET_URL);
       const text = await res.text();
       const json = JSON.parse(text.substring(47).slice(0, -2));
@@ -178,137 +85,73 @@
       const tbody = document.getElementById("data-rows");
       tbody.innerHTML = "";
 
-      let agentes = [];
-      let mesasMap = {}; // para crear tablero de mesas
+      const agentes = [];
 
-      rows.forEach(r => {
-        const c = r.c;
-        // Suponemos que columnas están:
-        // 0=Nombre, 1=MesaId, 2=FTD (ajusta si cambia en tu sheet)
-        const nombre = c[0]?.v || "";
-        const mesaId = c[1]?.v || "";
-        const ftd = Number(c[2]?.v) || 0;
-
-        // Llenar tabla
+      rows.forEach((r) => {
+        const cells = r.c.map(c => c?.v ?? "");
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${nombre}</td><td>${mesaId}</td><td>${ftd}</td>`;
+
+        cells.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+
         tbody.appendChild(tr);
 
-        // Ranking
-        if(nombre && !nombre.toLowerCase().includes("total")) {
-          agentes.push({ nombre, ftd });
+        // Agregar agentes al ranking si son datos válidos
+        if (cells[0] && !cells[0].toString().toLowerCase().includes("total") && !isNaN(cells[1])) {
+          agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
         }
 
-        // Guardar para tablero mesas
-        mesasMap[mesaId] = { nombre, ftd };
+        if (cells[2] && !cells[2].toString().toLowerCase().includes("total") && !isNaN(cells[3])) {
+          agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
+        }
       });
 
       showTopRanking(agentes);
-      showMesas(mesasMap);
-      detectarVentas(mesasMap);
-    } catch (error) {
-      console.error("Error cargando datos:", error);
-    }
-  }
-
-  function showTopRanking(agentes) {
-    const podio = document.getElementById("podio");
-    podio.innerHTML = "";
-
-    const top3 = agentes.sort((a,b) => b.ftd - a.ftd).slice(0,3);
-
-    const personajes = ["luigi", "mario", "yoshi"];
-    const nombresImg = {
-      luigi: "luigigif.gif",
-      mario: "mariogif.gif",
-      yoshi: "yoshi-gif.gif"
-    };
-
-    top3.forEach((agente, idx) => {
-      const pos = idx + 1;
-      const div = document.createElement("div");
-      div.className = `podio pos-${pos}`;
-
-      const img = document.createElement("img");
-      img.src = nombresImg[personajes[idx]];
-      img.alt = agente.nombre;
-
-      const nombre = document.createElement("div");
-      nombre.textContent = agente.nombre;
-
-      const valor = document.createElement("div");
-      valor.textContent = `${agente.ftd} FTD`;
-
-      const base = document.createElement("div");
-      base.className = "base";
-      base.textContent = `#${pos}`;
-
-      div.appendChild(img);
-      div.appendChild(nombre);
-      div.appendChild(valor);
-      div.appendChild(base);
-      podio.appendChild(div);
-    });
-  }
-
-  function showMesas(mesasMap) {
-    const cont = document.getElementById("mesas");
-    cont.innerHTML = "";
-    Object.entries(mesasMap).forEach(([mesaId, {nombre, ftd}]) => {
-      const div = document.createElement("div");
-      div.className = "mesa";
-      div.id = `mesa-${mesaId}`;
-      div.innerHTML = `${nombre} - FTD: <span id="ftd-${mesaId}">${ftd}</span>`;
-      cont.appendChild(div);
-    });
-  }
-
-  function detectarVentas(mesasMap) {
-    Object.entries(mesasMap).forEach(([mesaId, {nombre, ftd}]) => {
-      if(datosAnteriores[mesaId] !== undefined && ftd > datosAnteriores[mesaId]) {
-        registrarVenta(nombre, `mesa-${mesaId}`, ftd);
-      }
-      datosAnteriores[mesaId] = ftd;
-    });
-  }
-
-  function registrarVenta(nombre, mesaId, nuevoValor) {
-    // Mostrar nombre vendedor
-    const nombreDiv = document.getElementById("nombre-vendedor");
-    nombreDiv.innerText = `¡${nombre} hizo una venta!`;
-    nombreDiv.style.display = "block";
-    setTimeout(() => nombreDiv.style.display = "none", 3000);
-
-    // Efecto explosión
-    const efecto = document.getElementById("efecto-venta");
-    efecto.style.left = (window.innerWidth/2 - 50) + "px";
-    efecto.style.top = (window.innerHeight/2 - 50) + "px";
-    efecto.style.display = "block";
-    efecto.style.animation = "explosion 0.6s ease-out";
-
-    setTimeout(() => {
-      efecto.style.display = "none";
-      efecto.style.animation = "none";
-    }, 600);
-
-    // Destacar mesa
-    const mesa = document.getElementById(mesaId);
-    if(mesa) {
-      mesa.classList.add("destacada");
-      setTimeout(() => mesa.classList.remove("destacada"), 3000);
     }
 
-    // Actualizar valor en el span
-    const span = document.getElementById("ftd-" + mesaId.replace("mesa-", ""));
-    if(span) {
-      span.innerText = nuevoValor;
+    function showTopRanking(agentes) {
+      const podio = document.getElementById("podio");
+      podio.innerHTML = "";
+
+      const top3 = agentes.sort((a, b) => b.ftd - a.ftd).slice(0, 3);
+      const personajes = ["luigi", "mario", "yoshi"]; // 1ro, 2do, 3ro
+      const nombresImg = {
+        "luigi": "https://i.imgur.com/B4epZLJ.png",
+        "mario": "https://i.imgur.com/YrjsmFM.png",
+        "yoshi": "https://i.imgur.com/YXb4lyR.png"
+      };
+
+      top3.forEach((agente, index) => {
+        const pos = index + 1;
+        const div = document.createElement("div");
+        div.className = `podio pos-${pos}`;
+
+        const img = document.createElement("img");
+        img.src = nombresImg[personajes[index]];
+        img.alt = agente.nombre;
+
+        const nombre = document.createElement("div");
+        nombre.textContent = agente.nombre;
+        const valor = document.createElement("div");
+        valor.textContent = `${agente.ftd} FTD`;
+
+        const base = document.createElement("div");
+        base.className = "base";
+        base.textContent = `#${pos}`;
+
+        div.appendChild(img);
+        div.appendChild(nombre);
+        div.appendChild(valor);
+        div.appendChild(base);
+        podio.appendChild(div);
+      });
     }
-  }
 
-  fetchData();
-  setInterval(fetchData, 5000); // actualizar cada 5 seg
-</script>
-
+    fetchData();
+    setInterval(fetchData, 60000);
+  </script>
 </body>
 </html>
-
