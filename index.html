@@ -54,6 +54,36 @@
       margin-top: 40px;
       color: #ffce00;
     }
+    /* Efectos visuales */
+  #efecto-venta {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, yellow, orange, red);
+    pointer-events: none;
+    display: none;
+    z-index: 9999;
+  }
+  @keyframes explosion {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(5); opacity: 0; }
+  }
+
+  #nombre-vendedor {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: black;
+    color: white;
+    padding: 8px 16px;
+    font-size: 1.2em;
+    border-radius: 10px;
+    display: none;
+    z-index: 10000;
+    box-shadow: 0 0 10px yellow;
+  }
   </style>
 </head>
 <body>
@@ -152,6 +182,43 @@
 
     fetchData();
     setInterval(fetchData, 60000);
+
+    function detectarVentas(mesasMap) {
+    Object.entries(mesasMap).forEach(([mesaId, {nombre, ftd}]) => {
+      if(datosAnteriores[mesaId] !== undefined && ftd > datosAnteriores[mesaId]) {
+        registrarVenta(nombre, `mesa-${mesaId}`, ftd);
+      }
+      datosAnteriores[mesaId] = ftd;
+    });
+  }
+
+  function registrarVenta(nombre, mesaId, nuevoValor) {
+    // Mostrar nombre vendedor
+    const nombreDiv = document.getElementById("nombre-vendedor");
+    nombreDiv.innerText = `¡${nombre} hizo una venta!`;
+    nombreDiv.style.display = "block";
+    setTimeout(() => nombreDiv.style.display = "none", 3000);
+
+    // Efecto explosión
+    const efecto = document.getElementById("efecto-venta");
+    efecto.style.left = (window.innerWidth/2 - 50) + "px";
+    efecto.style.top = (window.innerHeight/2 - 50) + "px";
+    efecto.style.display = "block";
+    efecto.style.animation = "explosion 0.6s ease-out";
+
+    setTimeout(() => {
+      efecto.style.display = "none";
+      efecto.style.animation = "none";
+    }, 600);
+        // Actualizar valor en el span
+    const span = document.getElementById("ftd-" + mesaId.replace("mesa-", ""));
+    if(span) {
+      span.innerText = nuevoValor;
+    }
+  }
+
+  fetchData();
+  setInterval(fetchData, 5000); // actualizar cada 5 seg
   </script>
 </body>
 </html>
