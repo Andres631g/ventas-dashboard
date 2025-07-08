@@ -165,7 +165,7 @@
 
   <script>
     const SHEET_URL =
-            "https://docs.google.com/spreadsheets/d/1Egv8kEaiFUsbMDnnLDCXz0TbX70sHHBazdg5C85Qtbc/gviz/tq?tqx=out:json&gid=1787936828";
+      "https://docs.google.com/spreadsheets/d/1Egv8kEaiFUsbMDnnLDCXz0TbX70sHHBazdg5C85Qtbc/gviz/tq?tqx=out:json&gid=1787936828";
 
     let datosAnteriores = {};
 
@@ -180,59 +180,44 @@
 
       const agentes = [];
       const mesasMap = {};
-      const coloresPersonalizados = {
-        "Gabriel W": "#0044cc",
-        "Julian": "#00cc66"
-      };
 
       rows.forEach((r, i) => {
         const cells = r.c.map((c) => c?.v ?? "");
         const tr = document.createElement("tr");
 
-        cells.forEach((cell, colIndex) => { 
-  const td = document.createElement("td");
-  td.textContent = cell;
-
-  // 🎨 COLOR PERSONALIZADO POR NOMBRE
-  if (colIndex === 0 || colIndex === 2) {
-    const nombre = cell.toString().trim();
-    if (coloresPersonalizados[nombre]) {
-      td.style.backgroundColor = coloresPersonalizados[nombre];
-      td.style.color = "#fff";
-    }
-  }
-
-  tr.appendChild(td);
-});
-
+        cells.forEach((cell) => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
 
         tbody.appendChild(tr);
 
-       // Reemplaza el bloque completo con esto
-if (cells[0]) {
-  const id = `1-${i}`;
-  mesasMap[id] = {
-    nombre: cells[0],
-    ftd: Number(cells[1]) || 0
-  };
-  agentes.push({
-    nombre: cells[0],
-    ftd: Number(cells[1]) || 0
-  });
-}
+        // Solo agregar si el nombre NO contiene "total"
+        if (
+          cells[0] &&
+          !cells[0].toString().toLowerCase().includes("total") &&
+          !isNaN(cells[1])
+        ) {
+          const id = `1-${i}`;
+          mesasMap[id] = { nombre: cells[0], ftd: Number(cells[1]) };
+        }
+        if (
+          cells[2] &&
+          !cells[2].toString().toLowerCase().includes("total") &&
+          !isNaN(cells[3])
+        ) {
+          const id = `2-${i}`;
+          mesasMap[id] = { nombre: cells[2], ftd: Number(cells[3]) };
+        }
 
-if (cells[2]) {
-  const id = `2-${i}`;
-  mesasMap[id] = {
-    nombre: cells[2],
-    ftd: Number(cells[3]) || 0
-  };
-  agentes.push({
-    nombre: cells[2],
-    ftd: Number(cells[3]) || 0
-  });
-}
-
+        if (cells[0] && !cells[0].toString().toLowerCase().includes("total")) {
+          agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
+        }
+        if (cells[2] && !cells[2].toString().toLowerCase().includes("total")) {
+          agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
+        }
+      });
 
       detectarVentas(mesasMap);
       showTopRanking(agentes);
@@ -258,7 +243,7 @@ if (cells[2]) {
 
       setTimeout(() => {
         nombreDiv.style.display = "none";
-      }, 6000);
+      }, 3000);
 
       const efecto = document.getElementById("efecto-venta");
       efecto.style.left = window.innerWidth / 2 - 50 + "px";
