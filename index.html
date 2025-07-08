@@ -180,6 +180,10 @@
 
       const agentes = [];
       const mesasMap = {};
+      const coloresPersonalizados = {
+        "Gabriel W": "#0044cc",
+        "Julian": "#00cc66"
+      };
 
       rows.forEach((r, i) => {
         const cells = r.c.map((c) => c?.v ?? "");
@@ -243,7 +247,7 @@
 
       setTimeout(() => {
         nombreDiv.style.display = "none";
-      }, 3000);
+      }, 6000);
 
       const efecto = document.getElementById("efecto-venta");
       efecto.style.left = window.innerWidth / 2 - 50 + "px";
