@@ -200,29 +200,31 @@
   return !isNaN(parseFloat(valor.toString().replace(/[^0-9.-]+/g, "")));
 }
 
-if (esDatoValido(cells[0], cells[1])) {
-  const id = `1-${i}`;
-  mesasMap[id] = {
-    nombre: cells[0],
-    ftd: parseFloat(cells[1].toString().replace(/[^0-9.-]+/g, "")),
-  };
-  agentes.push({
-    nombre: cells[0],
-    ftd: parseFloat(cells[1].toString().replace(/[^0-9.-]+/g, "")),
-  });
-}
+ // Solo agregar si el nombre NO contiene "total"
+        if (
+          cells[0] &&
+          !cells[0].toString().toLowerCase().includes("total") &&
+          !isNaN(cells[1])
+        ) {
+          const id = `1-${i}`;
+          mesasMap[id] = { nombre: cells[0], ftd: Number(cells[1]) };
+        }
+        if (
+          cells[2] &&
+          !cells[2].toString().toLowerCase().includes("total") &&
+          !isNaN(cells[3])
+        ) {
+          const id = `2-${i}`;
+          mesasMap[id] = { nombre: cells[2], ftd: Number(cells[3]) };
+        }
 
-if (esDatoValido(cells[2], cells[3])) {
-  const id = `2-${i}`;
-  mesasMap[id] = {
-    nombre: cells[2],
-    ftd: parseFloat(cells[3].toString().replace(/[^0-9.-]+/g, "")),
-  };
-  agentes.push({
-    nombre: cells[2],
-    ftd: parseFloat(cells[3].toString().replace(/[^0-9.-]+/g, "")),
-  });
-}
+        if (cells[0] && !cells[0].toString().toLowerCase().includes("total")) {
+          agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
+        }
+        if (cells[2] && !cells[2].toString().toLowerCase().includes("total")) {
+          agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
+        }
+      });
 
 
       detectarVentas(mesasMap);
