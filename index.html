@@ -200,31 +200,42 @@
   return !isNaN(parseFloat(valor.toString().replace(/[^0-9.-]+/g, "")));
 }
 
- // Solo agregar si el nombre NO contiene "total"
-        if (
-          cells[0] &&
-          !cells[0].toString().toLowerCase().includes("total") &&
-          !isNaN(cells[1])
-        ) {
-          const id = `1-${i}`;
-          mesasMap[id] = { nombre: cells[0], ftd: Number(cells[1]) };
-        }
-        if (
-          cells[2] &&
-          !cells[2].toString().toLowerCase().includes("total") &&
-          !isNaN(cells[3])
-        ) {
-          const id = `2-${i}`;
-          mesasMap[id] = { nombre: cells[2], ftd: Number(cells[3]) };
-        }
+ function limpiarNumero(valor) {
+  if (!valor) return 0;
+  // Elimina "$", ",", y espacios
+  return parseFloat(valor.toString().replace(/[^0-9.-]+/g, "")) || 0;
+}
 
-        if (cells[0] && !cells[0].toString().toLowerCase().includes("total")) {
-          agentes.push({ nombre: cells[0], ftd: Number(cells[1]) });
-        }
-        if (cells[2] && !cells[2].toString().toLowerCase().includes("total")) {
-          agentes.push({ nombre: cells[2], ftd: Number(cells[3]) });
-        }
-      });
+function esFilaResumen(nombre) {
+  if (!nombre) return false;
+  const texto = nombre.toString().toLowerCase();
+  return texto.includes("total") || texto.includes("neto") || texto.includes("global");
+}
+
+if (cells[0] && !esFilaResumen(cells[0])) {
+  const id = `1-${i}`;
+  mesasMap[id] = {
+    nombre: cells[0],
+    ftd: limpiarNumero(cells[1]),
+  };
+  agentes.push({
+    nombre: cells[0],
+    ftd: limpiarNumero(cells[1]),
+  });
+}
+
+if (cells[2] && !esFilaResumen(cells[2])) {
+  const id = `2-${i}`;
+  mesasMap[id] = {
+    nombre: cells[2],
+    ftd: limpiarNumero(cells[3]),
+  };
+  agentes.push({
+    nombre: cells[2],
+    ftd: limpiarNumero(cells[3]),
+  });
+}
+
 
 
       detectarVentas(mesasMap);
