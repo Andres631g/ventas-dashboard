@@ -171,24 +171,25 @@
         const cells = r.c.map((c) => c?.v ?? "");
         const tr = document.createElement("tr");
 
-        cells.forEach((cell) => {
-          const td = document.createElement("td");
-          td.textContent = cell;
+        cells.forEach((cell, idx) => {
+  const td = document.createElement("td");
+  td.textContent = cell;
 
-          const txt = cell.toString().toLowerCase();
-          if (txt.includes("total global")) {
-            td.style.backgroundColor = "#ffd700"; // dorado
-            td.style.fontWeight = "bold";
-          } else if (txt.includes("total neto")) {
-            td.style.backgroundColor = "#c0ffc0"; // verde claro
-            td.style.fontWeight = "bold";
-          } else if (txt.includes("total mesa")) {
-            td.style.backgroundColor = "#add8e6"; // azul claro
-            td.style.fontWeight = "bold";
-          }
+  const texto = cell.toString().toLowerCase();
+  if (texto.includes("total")) {
+    td.style.backgroundColor = "#ffe0b3"; // naranja claro
+    td.style.fontWeight = "bold";
+  } else if (texto.includes("neto")) {
+    td.style.backgroundColor = "#d9edf7"; // azul claro
+    td.style.fontWeight = "bold";
+  } else if (texto.includes("global")) {
+    td.style.backgroundColor = "#dff0d8"; // verde claro
+    td.style.fontWeight = "bold";
+  }
 
-          tr.appendChild(td);
-        });
+  tr.appendChild(td);
+});
+
 
         tbody.appendChild(tr);
 
