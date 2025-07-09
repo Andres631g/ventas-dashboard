@@ -25,8 +25,7 @@
       width: 90%;
     }
 
-    th,
-    td {
+    th, td {
       padding: 10px;
       border: 1px solid #999;
     }
@@ -64,18 +63,9 @@
       animation: bounce 1.5s infinite;
     }
 
-    .pos-1 .base {
-      background: gold;
-      height: 120px;
-    }
-    .pos-2 .base {
-      background: silver;
-      height: 80px;
-    }
-    .pos-3 .base {
-      background: #cd7f32;
-      height: 60px;
-    }
+    .pos-1 .base { background: gold; height: 120px; }
+    .pos-2 .base { background: silver; height: 80px; }
+    .pos-3 .base { background: #cd7f32; height: 60px; }
 
     .base {
       width: 100px;
@@ -87,13 +77,8 @@
     }
 
     @keyframes bounce {
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     #efecto-venta {
@@ -108,14 +93,8 @@
     }
 
     @keyframes explosion {
-      0% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(5);
-        opacity: 0;
-      }
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(5); opacity: 0; }
     }
 
     #nombre-vendedor {
@@ -153,14 +132,10 @@
   <h2 class="ranking-title">🏆 Ranking de Ventas</h2>
   <div class="podio-container" id="podio"></div>
 
-  <!-- Elemento de efecto visual -->
   <div id="efecto-venta"></div>
   <div id="nombre-vendedor"></div>
 
-  <!-- Confetti JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-  <!-- Audio local -->
   <audio id="audio-fiesta" src="sonidoB.mp4" preload="auto"></audio>
 
   <script>
@@ -168,6 +143,17 @@
       "https://docs.google.com/spreadsheets/d/1Egv8kEaiFUsbMDnnLDCXz0TbX70sHHBazdg5C85Qtbc/gviz/tq?tqx=out:json&gid=1787936828";
 
     let datosAnteriores = {};
+
+    function limpiarNumero(valor) {
+      if (!valor) return 0;
+      return parseFloat(valor.toString().replace(/[^0-9.-]+/g, "")) || 0;
+    }
+
+    function esFilaResumen(nombre) {
+      if (!nombre) return false;
+      const texto = nombre.toString().toLowerCase();
+      return texto.includes("total") || texto.includes("neto") || texto.includes("global");
+    }
 
     async function fetchData() {
       const res = await fetch(SHEET_URL);
@@ -188,55 +174,37 @@
         cells.forEach((cell) => {
           const td = document.createElement("td");
           td.textContent = cell;
+
+          const txt = cell.toString().toLowerCase();
+          if (txt.includes("total global")) {
+            td.style.backgroundColor = "#ffd700"; // dorado
+            td.style.fontWeight = "bold";
+          } else if (txt.includes("total neto")) {
+            td.style.backgroundColor = "#c0ffc0"; // verde claro
+            td.style.fontWeight = "bold";
+          } else if (txt.includes("total mesa")) {
+            td.style.backgroundColor = "#add8e6"; // azul claro
+            td.style.fontWeight = "bold";
+          }
+
           tr.appendChild(td);
         });
 
         tbody.appendChild(tr);
 
-       function esDatoValido(nombre, valor) {
-  if (!nombre) return false;
-  const texto = nombre.toString().toLowerCase();
-  if (texto.includes("total") || texto.includes("neto") || texto.includes("global")) return false;
-  return !isNaN(parseFloat(valor.toString().replace(/[^0-9.-]+/g, "")));
-}
+        // Solo para el ranking y efectos, evitar los Totales
+        if (cells[0] && !esFilaResumen(cells[0])) {
+          const id = `1-${i}`;
+          mesasMap[id] = { nombre: cells[0], ftd: limpiarNumero(cells[1]) };
+          agentes.push({ nombre: cells[0], ftd: limpiarNumero(cells[1]) });
+        }
 
- function limpiarNumero(valor) {
-  if (!valor) return 0;
-  // Elimina "$", ",", y espacios
-  return parseFloat(valor.toString().replace(/[^0-9.-]+/g, "")) || 0;
-}
-
-function esFilaResumen(nombre) {
-  if (!nombre) return false;
-  const texto = nombre.toString().toLowerCase();
-  return texto.includes("total") || texto.includes("neto") || texto.includes("global");
-}
-
-if (cells[0] && !esFilaResumen(cells[0])) {
-  const id = `1-${i}`;
-  mesasMap[id] = {
-    nombre: cells[0],
-    ftd: limpiarNumero(cells[1]),
-  };
-  agentes.push({
-    nombre: cells[0],
-    ftd: limpiarNumero(cells[1]),
-  });
-}
-
-if (cells[2] && !esFilaResumen(cells[2])) {
-  const id = `2-${i}`;
-  mesasMap[id] = {
-    nombre: cells[2],
-    ftd: limpiarNumero(cells[3]),
-  };
-  agentes.push({
-    nombre: cells[2],
-    ftd: limpiarNumero(cells[3]),
-  });
-}
-
-
+        if (cells[2] && !esFilaResumen(cells[2])) {
+          const id = `2-${i}`;
+          mesasMap[id] = { nombre: cells[2], ftd: limpiarNumero(cells[3]) };
+          agentes.push({ nombre: cells[2], ftd: limpiarNumero(cells[3]) });
+        }
+      });
 
       detectarVentas(mesasMap);
       showTopRanking(agentes);
@@ -246,8 +214,7 @@ if (cells[2] && !esFilaResumen(cells[2])) {
       Object.entries(mesasMap).forEach(([mesaId, { nombre, ftd }]) => {
         if (
           datosAnteriores[mesaId] !== undefined &&
-          ftd > datosAnteriores[mesaId] &&
-          !nombre.toLowerCase().includes("total")
+          ftd > datosAnteriores[mesaId]
         ) {
           registrarVenta(nombre, mesaId, ftd);
         }
@@ -275,23 +242,15 @@ if (cells[2] && !esFilaResumen(cells[2])) {
         efecto.style.animation = "none";
       }, 600);
 
-      // Confetti
       confetti({
         particleCount: 200,
         spread: 100,
         origin: { y: 0.6 },
       });
 
-      // Sonido
       const audio = document.getElementById("audio-fiesta");
       audio.currentTime = 0;
       audio.play();
-
-      // Actualizar tabla (si quieres)
-      // const span = document.getElementById("ftd-" + mesaId.replace("mesa-", ""));
-      // if (span) {
-      //   span.innerText = nuevoValor;
-      // }
     }
 
     function showTopRanking(agentes) {
