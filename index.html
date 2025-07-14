@@ -230,7 +230,7 @@
 
       setTimeout(() => {
         nombreDiv.style.display = "none";
-      }, 3000);
+      }, 15000);
 
       const efecto = document.getElementById("efecto-venta");
       efecto.style.left = window.innerWidth / 2 - 50 + "px";
@@ -241,14 +241,20 @@
       setTimeout(() => {
         efecto.style.display = "none";
         efecto.style.animation = "none";
-      }, 6000);
+      }, 600);
 
-      confetti({
-        particleCount: 200,
-        spread: 100,
-        origin: { y: 0.6 },
-      });
+  const interval = setInterval(() => {
+    confetti({
+      particleCount: 50,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+  }, 300); // cada 300 ms
 
+      setTimeout(() => {
+        clearInterval(interval);
+      }, 15000); // detener tras 15 segundos
+      
       const audio = document.getElementById("audio-fiesta");
       audio.currentTime = 0;
       audio.play();
