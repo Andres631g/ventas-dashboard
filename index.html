@@ -223,11 +223,13 @@
       });
     }
 
-    function registrarVenta(nombre, mesaId, nuevoValor) {
-      const nombreDiv = document.getElementById("nombre-vendedor");
-      nombreDiv.innerText = `🎉 ¡${nombre} Depositó ${diferencia}! 😎`;
-      nombreDiv.style.display = "block";
+function registrarVenta(nombre, mesaId, nuevoValor) {
+  const ftdAnterior = datosAnteriores[mesaId] ?? 0; // usar 0 si es undefined
+  const diferencia = nuevoValor - ftdAnterior;
 
+  const nombreDiv = document.getElementById("nombre-vendedor");
+  nombreDiv.innerText = `🎉 ¡${nombre} hizo una venta de ${diferencia} FTD! 🎉`;
+  nombreDiv.style.display = "block";
       setTimeout(() => {
         nombreDiv.style.display = "none";
       }, 15000);
